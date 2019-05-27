@@ -1,0 +1,24 @@
+<ion-content color="primary" padding>
+  <ion-grid>
+    <ion-row color="primary" justify-content-center align-items-center>
+      <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+        <form #form="ngForm" (ngSubmit)="login(form)">
+          <div text-center image style="margin-bottom:50px">
+              <img src="assets/imgs/SavehrAgua.png">
+          </div>
+          <div padding>
+            <ion-item color="primary">
+              <ion-input name="user" type="text" placeholder="Usuario" ngModel required></ion-input>
+            </ion-item>
+            <ion-item color="primary">
+              <ion-input name="password" type="password" placeholder="Contraseña" ngModel required></ion-input>
+            </ion-item>
+          </div>
+          <div padding>
+            <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block">ACCEDER</ion-button>
+          </div>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

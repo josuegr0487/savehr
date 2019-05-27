@@ -2,3 +2,9 @@
   max-height: 35vh;
   overflow: hidden;
 }
+ion-content{
+  --background: #F5F5F5; 
+  ion-card{
+    --background: white;
+  }
+}
