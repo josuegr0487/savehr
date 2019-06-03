@@ -8,8 +8,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    loadChildren: './home/home.module#HomePageModule'
+    path: 'disponibilidad',
+    loadChildren: './disponibilidad/disponibilidad.module#DisponibilidadPageModule'
   },
   {
     path: 'list',

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm }   from '@angular/forms';
 import { Router } from  "@angular/router";
-import { LoadingController } from '@ionic/angular';
+import { LoadingOptions } from '@ionic/core';
 
 import { RestApiService } from '../services/rest-api.service';
+import { TasksService } from "../services/tasks.service";
 
 @Component({
   selector: 'app-login',
@@ -11,20 +12,22 @@ import { RestApiService } from '../services/rest-api.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  constructor( private  router:  Router, 
+  constructor( 
+    private  router:  Router, 
     private api: RestApiService,
-    private loadingController: LoadingController ) { }
+    private tasks:TasksService ) { }
 
   ngOnInit() {
   }
 
   async login(form:NgForm){
-    const loading = await this.loadingController.create({
-      message: 'Validando acessos ...'
-    });
-    await loading.present(); 
+    let loadingOptions:LoadingOptions = {
+      message: 'Validando accesos ...'
+    }
+    const loading = await this.tasks.presentLoading( loadingOptions );
+    loading.present();
     this.api.validateUsuario(form.value)
-    .then(res => {        
+    .then(res => {       
       let resData = typeof res.data === 'string' ? JSON.parse(res.data):res.data;       
       let SDTUsuario = typeof resData.SDTUsuario == 'string' ? JSON.parse(resData.SDTUsuario.replace(/\\/g,'/')) : resData.SDTUsuario;
       if(SDTUsuario.error){
@@ -34,15 +37,14 @@ export class LoginPage implements OnInit {
       }else{
         form.reset();
         loading.dismiss();
-        this.router.navigateByUrl('home');
+        this.router.navigateByUrl('disponibilidad');
       }
-  })
-  .catch( err => {
+    })
+    .catch( err => {       
       alert(err.error);
       form.reset();
       loading.dismiss();
-    }
-  );
+    });
   }
 
 }

@@ -1,20 +1,19 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 
-import * as HighCharts from 'highcharts';
 import * as moment from 'moment'
 import { RestApiService } from '../services/rest-api.service';
+import { async } from 'q';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: 'disponibilidad.page.html',
+  styleUrls: ['disponibilidad.page.scss'],
 })
-export class HomePage {
-  @ViewChild('container', { read: ElementRef }) private container: ElementRef;
-  @ViewChild('graphic', { read: ElementRef }) private graphic: ElementRef;
-
-  private chart: HighCharts.Chart;
+export class DisponibilidadPage {
+  @ViewChild('container', { read: ElementRef }) container: ElementRef;
+  
+  public data = {};
   public customDayNames = [ 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo' ];
   public customMonthNames = [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ];
   public form:any = {
@@ -29,45 +28,52 @@ export class HomePage {
   }
 
   ngOnInit(){
-    this.getSucursales();
+    //this.getSucursales();
   }
 
-  ngAfterViewInit() {
-    this.chart = HighCharts.chart(this.graphic.nativeElement, {
-        chart: {
-          type: 'spline'
-        },
+
+  ngAfterViewInit(){
+    this.initChart();
+  }
+
+
+  async initChart(){    
+    this.data = {
+      chart: {
+        type: 'spline'
+      },
+      title: {
+        text: 'Fruit Consumption'
+      },
+      xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges']
+      },
+      yAxis: {
         title: {
-          text: ''
+          text: 'Porcentaje'
+        }
+      },
+      series:[
+        {
+          name: 'Jane',
+          data: [1, 0, 4]
         },
-        xAxis: {
-          categories: ['Apples', 'Bananas', 'Oranges']
-        },
-        yAxis: {
-          title: {
-            text: 'Porcentaje'
-          }
-        },
-        series: <Array<Highcharts.SeriesOptionsType>>[
-          {
-            name: 'Jane',
-            data: [1, 0, 4]
-          },
-          {
-            name: 'John',
-            data: [5, 7, 3]
-          }
-        ],
-        credits: { enabled: false }
-      });
+        {
+          name: 'John',
+          data: [5, 7, 3]
+        }
+      ],
+      credits: { enabled: false },
+      exporting: { showTable: true }
+    };
+  
   }
-
 
   async getSucursales() {
     const loading = await this.loadingController.create({
        message: 'Cargando Sucursales'
     });
-    await loading.present(); 
+    await loading.present();
     this.api.getSucursales()
       .then(res => {     
           let resData = typeof res.data === 'string' ? JSON.parse(res.data):res.data;       
@@ -101,12 +107,12 @@ export class HomePage {
       let resData = typeof res.data === 'string' ? JSON.parse(res.data):res.data;       
       let SDTDataChart = typeof resData.SDTDataChart == 'string' ? JSON.parse(resData.SDTDataChart.replace(/\\/g,'/')) : resData.SDTDataChart;
       console.log('SDTDataChart',SDTDataChart);
-      this.chart.update({
+      this.data = {
         xAxis: {
           categories: SDTDataChart.categories
         },
         series: SDTDataChart.series
-    });
+    };
   })
   .catch( err => {
       console.log(err);
